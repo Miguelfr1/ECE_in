@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECE In : Social Media Professionnel de l’ECE Paris</title>
+    <style>
+        /* Ajoutez vos styles CSS ici */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .navigation {
+            background-color: #006699;
+        }
+
+        .navigation ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+        }
+
+        .navigation ul li {
+            margin: 0 10px;
+        }
+
+        .navigation ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .content-section {
+            display: none;
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-info img {
+            max-width: 200px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .post {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .comment {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .like {
+            color: blue;
+            cursor: pointer;
+        }
+        
+        .friend {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .friend img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        #chat-messages {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        #chat-messages div {
+            margin-bottom: 10px;
+        }
+
+        /* Styles pour le carrousel */
+        .carousel {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .carousel-images {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-images img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .carousel-buttons {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .carousel-buttons button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .carousel-buttons button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .events {
+            margin-top: 20px;
+        }
+
+        .events h3 {
+            margin-bottom: 10px;
+        }
+
+        .event {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .event:last-child {
+            border-bottom: none;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+        }
+
+        .map-container {
+            margin-top: 20px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header class="header">
+            <h1>ECE In : Social Media Professionnel de l’ECE Paris</h1>
+        </header>
+        
+        <nav class="navigation">
+            <ul>
+                <li><a href="#" data-section="accueil">Accueil</a></li>
+                <li><a href="#" data-section="fil-actualite" class="logged-in" style="display: none;">Fil d'Actualité</a></li>
+                <li><a href="#" data-section="mon-reseau" class="logged-in" style="display: none;">Mon Réseau</a></li>
+                <li><a href="#" data-section="profil" id="vous-link" class="logged-in" style="display: none;">Vous</a></li>
+                <li><a href="#" data-section="notifications" class="logged-in" style="display: none;">Notifications</a></li>
+                <li><a href="#" data-section="messagerie" class="logged-in" style="display: none;">Messagerie</a></li>
+                <li><a href="#" data-section="emplois" class="logged-in" style="display: none;">Emplois</a></li>
+                <li><a href="#" data-section="login" id="login-link" class="logged-out">Connexion</a></li>
+                <li><a href="#" data-section="register" id="register-link" class="logged-out">Inscription</a></li>
+                <li><a href="#" id="logout-link" class="logged-in" style="display: none;">Déconnexion</a></li>
+                <li><a href="#" data-section="publier" id="publier-link" class="logged-in" style="display: none;">Publier</a></li>
+                <li><a href="#" data-section="admin" id="admin-link" class="logged-in" style="display: none;">Admin</a></li>
+            </ul>
+        </nav>
+
+        <section id="accueil" class="content-section active">
+            <h2>Accueil</h2>
+            <p>Bienvenue sur ECE In : Social Media Professionnel de l’ECE Paris.</p>
+            
+            <h3>Événement de la semaine</h3>
+            
+            <div class="events">
+                <h3>Événements récents</h3>
+                <div id="events-list">
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <h3>Contactez l'administrateur</h3>
+                <p>Email: admin@ecein.com</p>
+                <p>Téléphone: +33 1 23 45 67 89</p>
+                <p>Adresse: 10 rue Sextius Michel, 75015 Paris, France</p>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3708775973523!2d2.286017777763897!3d48.85113777133131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e67151e3c16d05%3A0x1e3446766ada1337!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris!5e0!3m2!1sfr!2sfr!4v1716764627423!5m2!1sfr!2sfr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </section>
+
+        <section id="fil-actualite" class="content-section">
+            <h2>Fil d'Actualité</h2>
+            <div id="feed-posts"></div>
+        </section>
+
+        <section id="login" class="content-section">
+            <h2>Connexion</h2>
+            <form id="loginForm">
+                <label for="pseudo">Pseudo:</label>
+                <input type="text" id="pseudo" name="pseudo" required>
+                <label for="email">Email ECE:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit">Se connecter</button>
+            </form>
+        </section>
+
+        <section id="register" class="content-section">
+            <h2>Inscription</h2>
+            <form id="registerForm" action="register.php" method="POST">
+                <label for="pseudo">Pseudo:</label>
+                <input type="text" id="pseudo" name="pseudo" required>
+                <label for="email">Email ECE:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="name">Nom:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="photo">URL de la photo:</label>
+                <input type="text" id="photo" name="photo">
+                <label for="background">URL de l'image de fond:</label>
+                <input type="text" id="background" name="background">
+                <button type="submit">S'inscrire</button>
+            </form>
+        </section>
+        
+        <section id="profil" class="content-section">
+            <h2>Mon Profil</h2>
+            <div class="profile-info">
+                <img id="profile-photo" src="" alt="Photo de profil">
+                <h3 id="profile-name"></h3>
+                <img id="profile-bg" src="" alt="Image de fond">
+            </div>
+            <div id="posts"></div>
+        </section>
+
+        <section id="mon-reseau" class="content-section">
+            <h2>Mon Réseau</h2>
+            <input type="text" id="search-friends" placeholder="Rechercher des amis...">
+            <button id="search-button">Rechercher</button>
+            <div id="search-results"></div>
+            <h3>Mes Amis</h3>
+            <div id="friends-list"></div>
+        </section>
+
+        <section id="notifications" class="content-section">
+            <h2>Notifications</h2>
+            <div id="friend-requests"></div>
+        </section>
+
+        <section id="messagerie" class="content-section">
+            <h2>Messagerie</h2>
+            <div>
+                <select id="chat-friends"></select>
+                <button id="new-chat-button">Nouveau Chat</button>
+            </div>
+            <div id="chat-container" style="display:none;">
+                <div id="chat-messages"></div>
+                <form id="messageForm">
+                    <input type="text" id="message" name="message" required>
+                    <button type="submit">Envoyer</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="emplois" class="content-section">
+            <h2>Emplois</h2>
+            <p>Les offres d'emploi apparaîtront ici.</p>
+        </section>
+
+        <section id="publier" class="content-section">
+            <h2>Publier du Contenu</h2>
+            <form id="publishForm">
+                <label for="title">Titre:</label>
+                <input type="text" id="title" name="title" required>
+                <label for="content">Contenu:</label>
+                <textarea id="content" name="content" required></textarea>
+                <label for="media">URL de la photo/vidéo:</label>
+                <input type="text" id="media" name="media">
+                <label for="location">Lieu:</label>
+                <input type="text" id="location" name="location">
+                <label for="date">Date et Heure:</label>
+                <input type="datetime-local" id="date" name="date">
+                <button type="submit">Publier</button>
+            </form>
+        </section>
+
+        <section id="admin" class="content-section">
+            <h2>Admin</h2>
+            <form id="addUserForm" action="register.php" method="POST">
+                <label for="pseudo">Pseudo:</label>
+                <input type="text" id="pseudo" name="pseudo" required>
+                <label for="email">Email ECE:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="name">Nom:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="photo">URL de la photo:</label>
+                <input type="text" id="photo" name="photo">
+                <label for="background">URL de l'image de fond:</label>
+                <input type="text" id="background" name="background">
+                <button type="submit">Ajouter Utilisateur</button>
+            </form>
+            <h3>Supprimer des utilisateurs</h3>
+            <div id="user-list"></div>
+        </section>
+        
+        <footer class="footer">
+            <p>© 2024 ECE In. Tous droits réservés.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.content-section');
+            const navLinks = document.querySelectorAll('.navigation ul li a');
+            let currentUserId = null;
+            let isAdmin = false;
+
+            function showSection(sectionId) {
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(sectionId).classList.add('active');
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const targetSectionId = this.getAttribute('data-section');
+                    showSection(targetSectionId);
+                });
+            });
+
+            function updateNavLinks() {
+                const loggedOutLinks = document.querySelectorAll('.logged-out');
+                const loggedInLinks = document.querySelectorAll('.logged-in');
+
+                if (currentUserId) {
+                    loggedOutLinks.forEach(link => link.style.display = 'none');
+                    loggedInLinks.forEach(link => link.style.display = 'block');
+                } else {
+                    loggedOutLinks.forEach(link => link.style.display = 'block');
+                    loggedInLinks.forEach(link => link.style.display = 'none');
+                }
+            }
+
+            document.getElementById('loginForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const pseudo = document.getElementById('pseudo').value;
+                const email = document.getElementById('email').value;
+
+                fetch('login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'pseudo': pseudo,
+                        'email': email
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentUserId = data.user_id;
+                        isAdmin = data.is_admin;
+
+                        document.getElementById('login').classList.remove('active');
+                        document.getElementById('register').classList.remove('active');
+                        document.getElementById('profil').classList.add('active');
+                        document.getElementById('profile-name').innerText = data.name;
+                        document.getElementById('profile-photo').src = data.photo;
+                        document.getElementById('profile-bg').src = data.background;
+                        updateNavLinks();
+
+                        if (isAdmin) {
+                            document.getElementById('admin-link').style.display = 'block';
+                            loadUsers();
+                        } else {
+                            document.getElementById('admin-link').style.display = 'none';
+                        }
+
+                        loadPosts(data.user_id);
+                        loadFriends(data.user_id);
+                        loadFriendRequests();  // Load friend requests for the logged-in user
+                        loadFriendsForChat();  // Load friends for chat
+                        loadEvents(data.user_id);  // Load events for the home page
+                        loadFeedPosts(data.user_id);  // Load feed posts for the feed section
+                    } else {
+                        alert('Pseudo ou email incorrect');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            document.getElementById('logout-link').addEventListener('click', function(event) {
+                event.preventDefault();
+                fetch('logout.php')
+                .then(response => {
+                    currentUserId = null;
+                    isAdmin = false;
+                    showSection('accueil');
+                    updateNavLinks();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            document.getElementById('publishForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const title = document.getElementById('title').value;
+                const content = document.getElementById('content').value;
+                const media = document.getElementById('media').value;
+                const location = document.getElementById('location').value;
+                const date = document.getElementById('date').value;
+
+                fetch('publish.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'title': title,
+                        'content': content,
+                        'media': media,
+                        'location': location,
+                        'date': date,
+                        'user_id': currentUserId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Publication créée avec succès');
+                        document.getElementById('publishForm').reset();
+                        loadPosts(currentUserId);
+                    } else {
+                        console.error('Error:', data.error);
+                        alert('Erreur lors de la création de la publication.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            document.getElementById('search-button').addEventListener('click', function(event) {
+                const searchQuery = document.getElementById('search-friends').value;
+                fetch(`search_friends.php?query=${searchQuery}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsContainer = document.getElementById('search-results');
+                    resultsContainer.innerHTML = '';
+                    data.friends.forEach(friend => {
+                        const friendElement = document.createElement('div');
+                        friendElement.classList.add('friend');
+                        friendElement.innerHTML = `
+                            <img src="${friend.photo}" alt="Photo de ${friend.name}">
+                            <span>${friend.name}</span>
+                            <button onclick="addFriend(${friend.id})">Ajouter</button>
+                        `;
+                        resultsContainer.appendChild(friendElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            function loadPosts(userId) {
+                fetch(`load_posts.php?user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const postsContainer = document.getElementById('posts');
+                    postsContainer.innerHTML = '';
+                    data.posts.forEach(post => {
+                        const postElement = document.createElement('div');
+                        postElement.classList.add('post');
+                        postElement.innerHTML = `
+                        <p><strong>${post.user_name}</strong></p> <!-- Affiche le nom de l'utilisateur -->
+
+                            <h3>${post.title}</h3>
+                            <p>${post.content}</p>
+                            ${post.media ? `<img src="${post.media}" alt="media">` : ''}
+                            <p>${post.location}</p>
+                            <p>${post.reg_date}</p>
+                            <div class="like" data-post-id="${post.id}">Like</div>
+                            <span>${post.like_count} likes</span>
+                            <form class="comment-form" data-post-id="${post.id}">
+                                <input type="text" name="comment" placeholder="Ajouter un commentaire">
+                                <button type="submit">Commenter</button>
+                            </form>
+                            <div class="comments" id="comments-${post.id}">
+                                ${post.comments.map(comment => `<div class="comment"><strong>${comment.commenter_name}:</strong> ${comment.content}</div>`).join('')}
+                            </div>
+                        `;
+                        postsContainer.appendChild(postElement);
+                    });
+
+                    document.querySelectorAll('.like').forEach(likeElement => {
+                        likeElement.addEventListener('click', function() {
+                            const postId = this.getAttribute('data-post-id');
+                            fetch('like.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    'post_id': postId,
+                                    'user_id': currentUserId
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Publication likée');
+                                    loadPosts(userId);  // Recharge les posts pour mettre à jour le nombre de likes
+                                } else {
+                                    console.error('Error:', data.error);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                        });
+                    });
+
+                    document.querySelectorAll('.comment-form').forEach(form => {
+                        form.addEventListener('submit', function(event) {
+                            event.preventDefault();
+                            const postId = this.getAttribute('data-post-id');
+                            const commentContent = this.querySelector('input[name="comment"]').value;
+
+                            fetch('comment.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    'post_id': postId,
+                                    'content': commentContent,
+                                    'user_id': currentUserId
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Commentaire ajouté');
+                                    loadPosts(userId); // Recharge les publications pour afficher le nouveau commentaire
+                                } else {
+                                    console.error('Error:', data.error);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            function loadFriends(userId) {
+                fetch(`load_friends.php?user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const friendsContainer = document.getElementById('friends-list');
+                    friendsContainer.innerHTML = '';
+                    data.friends.forEach(friend => {
+                        const friendElement = document.createElement('div');
+                        friendElement.classList.add('friend');
+                        friendElement.innerHTML = `
+                            <img src="${friend.photo}" alt="Photo de ${friend.name}">
+                            <span>${friend.name}</span>
+                        `;
+                        friendsContainer.appendChild(friendElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            function loadFriendRequests() {
+                fetch('load_friend_requests.php')
+                .then(response => response.json())
+                .then(data => {
+                    const requestsContainer = document.getElementById('friend-requests');
+                    requestsContainer.innerHTML = '';
+                    data.requests.forEach(request => {
+                        const requestElement = document.createElement('div');
+                        requestElement.innerHTML = `
+                            <p>${request.sender_name} vous a envoyé une demande d'ami.</p>
+                            <button onclick="handleFriendRequest(${request.id}, 'accept')">Accepter</button>
+                            <button onclick="handleFriendRequest(${request.id}, 'decline')">Refuser</button>
+                        `;
+                        requestsContainer.appendChild(requestElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            function loadFriendsForChat() {
+                fetch('load_friends.php?user_id=' + currentUserId)
+                .then(response => response.json())
+                .then(data => {
+                    const friendsSelect = document.getElementById('chat-friends');
+                    friendsSelect.innerHTML = '';
+                    data.friends.forEach(friend => {
+                        const option = document.createElement('option');
+                        option.value = friend.id;
+                        option.textContent = friend.name;
+                        friendsSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            document.getElementById('new-chat-button').addEventListener('click', function() {
+                const friendId = document.getElementById('chat-friends').value;
+                fetch('create_chat.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'friend_id': friendId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentChatId = data.chat_id;
+                        loadMessages(currentChatId);
+                        document.getElementById('chat-container').style.display = 'block';
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            document.getElementById('messageForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const message = document.getElementById('message').value;
+                fetch('send_message.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'chat_id': currentChatId,
+                        'message': message
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('message').value = '';
+                        loadMessages(currentChatId);
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            function loadMessages(chatId) {
+                fetch('load_messages.php?chat_id=' + chatId)
+                .then(response => response.json())
+                .then(data => {
+                    const chatMessagesContainer = document.getElementById('chat-messages');
+                    chatMessagesContainer.innerHTML = '';
+                    data.messages.forEach(message => {
+                        const messageElement = document.createElement('div');
+                        messageElement.innerHTML = `<strong>${message.sender_name}</strong>: ${message.message} <em>${message.created_at}</em>`;
+                        chatMessagesContainer.appendChild(messageElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            window.addFriend = function(friendId) {
+                fetch('send_friend_request.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'friend_id': friendId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Demande d\'ami envoyée');
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            };
+
+            window.handleFriendRequest = function(requestId, action) {
+                fetch('handle_friend_request.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'request_id': requestId,
+                        'action': action
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadFriendRequests();
+                        loadFriends(currentUserId);
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            };
+
+            function loadUsers() {
+                fetch('load_users.php')
+                .then(response => response.json())
+                .then(data => {
+                    const userList = document.getElementById('user-list');
+                    userList.innerHTML = '';
+                    data.users.forEach(user => {
+                        const userElement = document.createElement('div');
+                        userElement.classList.add('user');
+                        userElement.innerHTML = `
+                            <span>${user.name} (${user.email})</span>
+                            <button onclick="deleteUser(${user.id})">Supprimer</button>
+                        `;
+                        userList.appendChild(userElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            window.deleteUser = function(userId) {
+                fetch('delete_user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'user_id': userId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Utilisateur supprimé');
+                        loadUsers();
+                    } else {
+                        console.error('Error:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            };
+
+            function loadEvents(userId) {
+                fetch(`load_events.php?user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const eventsContainer = document.getElementById('events-list');
+                    eventsContainer.innerHTML = '';
+                    data.events.forEach(event => {
+                        const eventElement = document.createElement('div');
+                        eventElement.classList.add('event');
+                        eventElement.innerHTML = `
+                            <h4>${event.title}</h4>
+                            <p>${event.description}</p>
+                            <p>${event.date}</p>
+                        `;
+                        eventsContainer.appendChild(eventElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            function loadFeedPosts(userId) {
+                fetch(`load_feed_posts.php?user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const feedPostsContainer = document.getElementById('feed-posts');
+                    feedPostsContainer.innerHTML = '';
+                    data.posts.forEach(post => {
+                        const postElement = document.createElement('div');
+                        postElement.classList.add('post');
+                        postElement.innerHTML = `
+                        <p><strong>${post.user_name}</strong></p> <!-- Affiche le nom de l'utilisateur -->
+
+                            <h3>${post.title}</h3>
+                            <p>${post.content}</p>
+                            ${post.media ? `<img src="${post.media}" alt="media">` : ''}
+                            <p>${post.location}</p>
+                            <p>${post.reg_date}</p>
+                            <div class="like" data-post-id="${post.id}">Like</div>
+                            <span>${post.like_count} likes</span> <!-- Affiche le nombre de likes -->
+                            <form class="comment-form" data-post-id="${post.id}">
+                                <input type="text" name="comment" placeholder="Ajouter un commentaire">
+                                <button type="submit">Commenter</button>
+                            </form>
+                            <div class="comments" id="comments-${post.id}">
+                                ${post.comments.map(comment => `<div class="comment"><strong>${comment.commenter_name}:</strong> ${comment.content}</div>`).join('')}
+                            </div>
+                        `;
+                        feedPostsContainer.appendChild(postElement);
+                    });
+
+                    document.querySelectorAll('.like').forEach(likeElement => {
+                        likeElement.addEventListener('click', function() {
+                            const postId = this.getAttribute('data-post-id');
+                            fetch('like.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    'post_id': postId,
+                                    'user_id': currentUserId
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Publication likée');
+                                    loadFeedPosts(userId);  // Recharge les posts pour mettre à jour le nombre de likes
+                                } else {
+                                    console.error('Error:', data.error);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                        });
+                    });
+
+                    document.querySelectorAll('.comment-form').forEach(form => {
+                        form.addEventListener('submit', function(event) {
+                            event.preventDefault();
+                            const postId = this.getAttribute('data-post-id');
+                            const commentContent = this.querySelector('input[name="comment"]').value;
+
+                            fetch('comment.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: new URLSearchParams({
+                                    'post_id': postId,
+                                    'content': commentContent,
+                                    'user_id': currentUserId
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Commentaire ajouté');
+                                    loadFeedPosts(userId); // Recharge les publications pour afficher le nouveau commentaire
+                                } else {
+                                    console.error('Error:', data.error);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            // Afficher la section Accueil par défaut
+            showSection('accueil');
+            updateNavLinks(); // Mettre à jour les liens de navigation au chargement initial
+        });
+    </script>
+</body>
+</html>

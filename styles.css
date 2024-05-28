@@ -1,0 +1,188 @@
+        /* Ajoutez vos styles CSS ici */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .navigation {
+            background-color: #006699;
+        }
+
+        .navigation ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+        }
+
+        .navigation ul li {
+            margin: 0 10px;
+        }
+
+        .navigation ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .content-section {
+            display: none;
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-info img {
+            max-width: 200px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .post {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .comment {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .like {
+            color: blue;
+            cursor: pointer;
+        }
+        
+        .friend {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .friend img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        #chat-messages {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        #chat-messages div {
+            margin-bottom: 10px;
+        }
+
+        /* Styles pour le carrousel */
+        .carousel {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .carousel-images {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-images img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .carousel-buttons {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .carousel-buttons button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .carousel-buttons button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .events {
+            margin-top: 20px;
+        }
+
+        .events h3 {
+            margin-bottom: 10px;
+        }
+
+        .event {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+
+        .event:last-child {
+            border-bottom: none;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+        }
+
+        .map-container {
+            margin-top: 20px;
+            height: 300px;
+        }
