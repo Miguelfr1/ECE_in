@@ -21,7 +21,17 @@ if ($conn->connect_error) {
 $post_id = $_POST['post_id'];
 $user_id = $_SESSION['user_id'];
 
-$sql = "INSERT INTO likes (post_id, user_id) VALUES ('$post_id', '$user_id')";
+$recherche = "SELECT * FROM likes WHERE post_id = $post_id and user_id = $user_id;";
+$result_recherche = $conn->query($recherche);
+
+if( $result_recherche->num_rows > 0) {
+    $sql = "DELETE FROM likes WHERE post_id = $post_id AND user_id = $user_id;";
+
+}
+else{
+    $sql = "INSERT INTO likes (post_id, user_id) VALUES ('$post_id', '$user_id')";
+
+}
 
 if ($conn->query($sql) === TRUE) {
     echo json_encode(['success' => true]);

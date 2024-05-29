@@ -45,6 +45,15 @@ if ($result->num_rows > 0) {
             }
         }
 
+        $recherche = "SELECT * FROM likes WHERE post_id = $post_id and user_id = $user_id;";
+        $result_recherche = $conn->query($recherche);
+        if( $result_recherche->num_rows == 0) {
+            $is_like = 0;
+        }
+        else{
+            $is_like = 1;
+        }
+
         $posts[] = [
             'id' => $row['id'],
             'title' => $row['title'],
@@ -54,7 +63,8 @@ if ($result->num_rows > 0) {
             'reg_date' => $row['reg_date'],
             'user_name' => $row['user_name'],
             'like_count' => $row['like_count'],
-            'comments' => $comments
+            'comments' => $comments,
+            'is_like' => $is_like,
         ];
     }
 }
