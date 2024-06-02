@@ -20,8 +20,35 @@ body {
     padding: 10px;
     display: flex;
     border-radius: 5px;
-    z-index: 4;
     margin-top: -10px;
+}
+
+.carousel {
+    position: relative;
+    width: 80%;
+    max-width: 600px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.carousel-item {
+    min-width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    text-align: center;
+    background-color: #e0e0e0;
+    border-right: 1px solid #ccc;
+}
+
+.carousel-item:last-child {
+    border-right: none;
 }
 
 .header h1 {
@@ -41,6 +68,7 @@ body {
     background-color: #74caca;
     padding: 10px;
     border-radius: 5px;
+    width: 93%;
 }
 
 .section {
@@ -58,24 +86,130 @@ body {
     margin-top: 0;
 }
 
-.section form {
-    margin-bottom: 20px;
+.post {
+    padding-left: 20px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    background-color: #dcfcfc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin-left: 5%;
+    margin-top: 3%;
+    position: relative;
 }
 
-.post {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 10px;
+.titre-post {
+    font-size: 30px;
+    margin-left: 10px;
 }
 
 .post img {
-    max-width: 100%;
+    width: 60%;
     height: auto;
 }
 
+.post-info p {
+    margin: 0 5px 0 0;
+}
+
+.supp {
+    right: -8%;
+    bottom: 50%;
+    height: 5%;
+    width: 5%;
+    position: absolute;
+}
+
+.supp img {
+    transition: filter 0.3s ease;
+}
+
+.post-info {
+    bottom: 20px;
+    right: 10px;
+    position: absolute;
+    text-align: right;
+}
+
+.contenairpubli {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    color: #74caca;
+    font-weight: bold;
+    -webkit-text-stroke: 1px black;
+    float: right;
+}
+
 .comments {
-    padding: 10px;
+    padding: 5px;
     background-color: #f9f9f9;
+    width: 75%;
+    border-radius: 5px;
+}
+
+.commentaires {
+    display: flex;
+    align-items: center;
+}
+
+.usercom {
+    font-weight: bold;
+}
+
+.job-offer-form {
+    margin-top: 10px;
+}
+
+.job-offer-form button {
+    color: white;
+    background-color: #256C6C;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.job-offer-form button:hover {
+    background-color: #153e3e
+}
+
+.comment-form {
+    display: flex;
+    align-items: center;
+}
+
+.comment-form input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.comment-button {
+    margin-left: 5px;
+    cursor: pointer;
+    background-color: #256C6C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 7px;
+}
+
+.like-button {
+    margin-left: 33%;
+    margin-right: 1%;
+    cursor: pointer;
+    background-color: #256C6C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding-right: 7px;
+    padding-top: 5px;
+    padding-bottom: 3px;
 }
 
 .footer {
@@ -153,7 +287,6 @@ h2 {
 
 #registerForm input[type="file"] {
     padding: 10px;
-    background-color: #74caca;
     color: #256C6C;
 }
 
@@ -167,31 +300,35 @@ h2 {
     font-size: 20px;
 }
 
+.navcurrent {
+    border: 2px solid white;
+}
+
 .navigation a:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
-.nom-profil{
+
+.nom-profil {
     font-size: 25px;
     font-weight: bold;
-    margin-top: -60px;
-    margin-left: 120%;
     color: white;
 }
+
 .menu {
-    top: 2.3%;  
-    right: 3%;
-    width: 5%;
-    height: 5%;
-    margin-right: 15%;
-    position: absolute;
+    float: right;
+    display: flex;
+    align-items: center;
+    margin-top: -85px;
+    margin-right: 10px;
 }
 
 .menu-icon {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     cursor: pointer;
     border-radius: 50%;
     border: 2px solid white;
+    margin-right: 10px;
 }
 
 .dropdown-content {
@@ -202,6 +339,8 @@ h2 {
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 5px;
+    margin-top: 12%;
+    margin-right: 8%;
 }
 
 .dropdown-content a {
@@ -213,15 +352,23 @@ h2 {
 
 .dropdown-content a:hover {
     background-color: #f1f1f1;
+    border-radius: 5px;
 }
 
 .show {
     display: block;
 }
 
-.menu img {
-    width: 80px;
-    height: 80px;
+#friends-modal {
+    background-color: white;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    margin-top: 25%;
+    overflow-y: scroll;
+    min-height: 200px;
 }
 
 .rightcolonne {
@@ -237,36 +384,8 @@ h2 {
     margin-right: 10px;
 }
 
-.carousel {
-    position: relative;
-    width: 80%;
-    max-width: 600px;
-    overflow: hidden;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: white;
-}
-
-.carousel-inner {
-    display: flex;
-    transition: transform 0.5s ease;
-}
-
-.carousel-item {
-    min-width: 100%;
-    box-sizing: border-box;
-    padding: 20px;
-    text-align: center;
-    background-color: #e0e0e0;
-    border-right: 1px solid #ccc;
-}
-
-.carousel-item:last-child {
-    border-right: none;
-}
-
-.contact p{
-    font-size:10px ;
+.contact p {
+    font-size: 10px;
 }
 
 #accueil h3 {
@@ -292,6 +411,39 @@ h2 {
     display: block;
 }
 
+#accueil input[type="datetime-local"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.choix button {
+    background-color: #256C6C;
+    border: none;
+    outline: none;
+    color: white;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: 0.3s;
+    border-radius: 5px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.choix button:hover {
+    background-color: #a6d9d9;
+    color: black;
+}
+
+.tabcontent {
+    display: none;
+    padding: 20px;
+    border-top: none;
+}
+
 #accueil input[type="text"] {
     width: 20%;
 }
@@ -308,13 +460,22 @@ h2 {
     border: none;
     padding: 5px;
     border-radius: 5px;
-    margin-left: 10%;
+    margin-left: 20%;
     margin-top: 2%;
-    width: 80%;
+    width: 60%;
 }
 
 #accueil button:hover {
     background-color: #153e3e;
+}
+
+#accueil {
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    background-color: #a6d9d9;
+    padding: 10px;
+
 }
 
 #accueil textarea {
@@ -435,6 +596,57 @@ h2 {
     height: 500px;
 }
 
+.tabcontent select {
+    background-color: #256C6C;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+}
+
+.modifvisi {
+    background-color: #256C6C;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.modifvisi:hover {
+    background-color: #153e3e;
+}
+
+.visibility-form {
+    display: flex;
+    align-items: center;
+    position: absolute;
+}
+
+#editprofil1 input[type="password"] {
+    display: block;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    width: 20%;
+}
+
+#generate-cv-button {
+    background-color: #256C6C;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+#generate-cv-button:hover {
+    background-color: #153e3e;
+}
+
 .bloc1ami,
 .bloc2ami {
     flex: 1;
@@ -478,6 +690,7 @@ h2 {
     padding: 8px;
     cursor: pointer;
 }
+
 .boutonrech1 {
     color: white;
     background-color: #256C6C;
@@ -487,10 +700,11 @@ h2 {
     cursor: pointer;
     margin-left: 10px;
     margin-top: 10px;
-    font-size: 10px;
+    font-size: 12px;
 }
 
-.boutonrech:hover,.boutonrech1:hover {
+.boutonrech:hover,
+.boutonrech1:hover {
     background-color: #153e3e;
 }
 
@@ -507,30 +721,35 @@ h2 {
     margin-top: 20px;
     margin-left: 10px;
     background-color: #c1eaea;
+    cursor: pointer;
 }
 
 .boutonaddami:hover {
     background-color: #b6afaf;
 }
+
 .profile-container {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
     font-size: 17px;
 }
+
 .profile-picture1 {
     width: 70px;
     height: 70px;
     border-radius: 50%;
     margin-right: 10px;
 }
-#notif img{
+
+#notif img {
     width: 70px;
     height: 70px;
     border-radius: 50%;
     margin-right: 10px;
 }
-.acceptrefus{
+
+.acceptrefus {
     background-color: #256C6C;
     cursor: pointer;
     color: white;
@@ -541,4 +760,316 @@ h2 {
     margin-top: 2%;
     width: 50%;
     font-size: 12px;
+}
+
+.LU {
+    background-color: #256C6C;
+    cursor: pointer;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    margin-left: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.profile-container1 {
+    display: flex;
+    align-items: center;
+}
+
+.notificationb {
+    float: right;
+    background-color: #153e3e;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.job-offer {
+    padding: 20px;
+    border-bottom: 1px solid #256C6C;
+}
+
+.editprofil img {
+    width: 20px;
+    height: 20px;
+}
+
+.editprofil {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-color: #c1eaea;
+    cursor: pointer;
+}
+
+.editprofil:hover {
+    background-color: #b6afaf;
+}
+
+.nom-profilvue {
+    font-weight: bold;
+    font-size: 30px;
+    color: #256C6C;
+    margin-left: 13px;
+    -webkit-text-stroke: 1px white;
+    /* Contour du texte pour les navigateurs WebKit (Safari, Chrome) */
+}
+
+.profilcomp a,
+.boutoncheckami {
+    margin-left: auto;
+}
+
+.boutoncheckami button {
+    background-color: #74caca;
+    color: black;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 2px solid white;
+    padding: 5px;
+}
+
+.boutoncheckami button[type="submit"] {
+    cursor: pointer;
+}
+
+.boutoncheckami button[type="submit"]:hover {
+    color: white;
+    background-color: #153e3e;
+}
+
+#editprofil1 textarea {
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    display: block;
+    width: 100%;
+    height: 50%;
+}
+
+#editprofil1 button {
+    width: 30%;
+    margin-top: 30px;
+    margin-left: 35%;
+    padding: 10px;
+    background-color: #256C6C;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#editprofil1 input[type="text"],
+#editprofil1 input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.blocprincipaledit {
+    display: flex;
+    gap: 3%;
+    height: 300px;
+    margin-bottom: 3%;
+}
+
+.blocedit2,
+.blocedit1 {
+    flex: 1;
+}
+
+#editprofil1 input[type="file"] {
+    display: block;
+    margin-bottom: 10%;
+    margin-top: 5%;
+}
+
+#fermer {
+    padding: 0px;
+}
+
+.blocprincipalconversation {
+    display: flex;
+    height: 500px;
+}
+
+.bloconv {
+    width: 40%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+.bloconv h2{
+    color: black;
+}
+#conversation-section {
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    width: 100%;
+    height: 85%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.envoyermessages {
+    position: absolute;
+    bottom: 12%;
+    width: 40%;
+}
+
+.envoyermessages button {
+    margin-right: 10px;
+    background-color: #256C6C;
+    cursor: pointer;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 3px;
+    margin-bottom: 10px;
+}
+
+.envoyermessages textarea {
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.envoyermessages {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.message-form,.message-form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.message-form textarea,.message-form textarea {
+    flex: 1;
+    resize: none;
+}
+
+.message-form button,.message-form button {
+    flex-shrink: 0;
+}
+.envoyermessages img{
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+.sectionmess {
+    padding-bottom: 30px;
+    background-color: rgb(225, 225, 225);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-height: 600px;
+    min-height: 400px;
+    margin-left: 40px;
+}
+
+.sectionmess h2 {
+    margin-top: 0;
+}
+
+.MP {
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    height: 50%;
+    padding: 5px;
+    background-color: rgb(188, 188, 188);
+    margin-bottom: 3%;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.groupes {
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    height: 50%;
+    padding: 5px;
+    background-color: rgb(188, 188, 188);
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+.Membressss button{
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+}
+.Membressss button:hover{
+    background-color:#9f9f9f;
+}
+.Membressss{
+    float: right;
+}
+#fermerr{
+    padding: 0px;
+}
+#membress{
+    float: right;
+    background-color: #dfdcdc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.blocprincipalconversation ul{
+    list-style-type: none;
+    padding: 0;
+}
+.profilconv{
+    display: flex;
+    align-items: center;
+}
+.bloconv a{
+    text-decoration: none;
+    color: #256C6C;
+}
+.nomprofilconv{
+    font-weight: bold;
+}
+.groupes button{
+    border-radius: 5px;
+    border: none;
+    background-color: #256C6C;
+    padding: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    
+}
+#createGroupButton{
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+.groupes input[type="text"]{
+    border-radius: 5px;
+    padding: 2px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+.groupes label{
+    color: white;
+}
+.groupes li{
+    font-weight: bold;
+    font-size: 20px;
 }
