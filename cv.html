@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        h1, h2, h3 {
+            color: #256C6C;
+        }
+        
+        p, ul {
+            color: #333;
+        }
+        
+        ul {
+            list-style-type: square;
+        }
+        
+        #cvContainer {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button {
+            background-color: #256C6C;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #1D5252;
+        }
+    </style>
+</head>
+<body>
+    <h1>MON CV</h1>
+    <button id="generateButton">Générer mon CV</button>
+    <div id="cvContainer"></div>
+
+    <script>
+        document.getElementById('generateButton').addEventListener('click', function() {
+            fetch('cv.xml')
+                .then(response => response.text())
+                .then(data => {
+                    let parser = new DOMParser();
+                    let xmlDoc = parser.parseFromString(data, "text/xml");
+                    let nom = xmlDoc.getElementsByTagName("Nom")[0].childNodes[0].nodeValue;
+                    let adresse = xmlDoc.getElementsByTagName("Adresse")[0].childNodes[0].nodeValue;
+                    let email = xmlDoc.getElementsByTagName("Email")[0].childNodes[0].nodeValue;
+                    let telephone = xmlDoc.getElementsByTagName("Téléphone")[0].childNodes[0].nodeValue;
+                    let experiences = xmlDoc.getElementsByTagName("Job");
+                    let experienceHtml = '';
+                    for (let i = 0; i < experiences.length; i++) {
+                        let titre = experiences[i].getElementsByTagName("Titre")[0].childNodes[0].nodeValue;
+                        let entreprise = experiences[i].getElementsByTagName("Entreprise")[0].childNodes[0].nodeValue;
+                        let années = experiences[i].getElementsByTagName("Années")[0].childNodes[0].nodeValue;
+                        let description = experiences[i].getElementsByTagName("Description")[0].childNodes[0].nodeValue;
+                        experienceHtml += `<div><h3>${titre}</h3><p>${entreprise}, ${années}</p><p>${description}</p></div>`;
+                    }
+                    let diplome = xmlDoc.getElementsByTagName("Diplôme")[0].childNodes[0].nodeValue;
+                    let établissement = xmlDoc.getElementsByTagName("Établissement")[0].childNodes[0].nodeValue;
+                    let annéesÉtudes = xmlDoc.getElementsByTagName("Années")[1].childNodes[0].nodeValue;
+                    let compétences = xmlDoc.getElementsByTagName("Compétence");
+                    let compétencesHtml = '';
+                    for (let i = 0; i < compétences.length; i++) {
+                        compétencesHtml += `<li>${compétences[i].childNodes[0].nodeValue}</li>`;
+                    }
+                    let cvHtml = `
+                        <h2>Informations Personnelles</h2>
+                        <p><strong>Nom:</strong> ${nom}</p>
+                        <p><strong>Adresse:</strong> ${adresse}</p>
+                        <p><strong>Email:</strong> ${email}</p>
+                        <p><strong>Téléphone:</strong> ${telephone}</p>
+                        <h2>Parcours</h2>
+                        <p><strong>${diplome}</strong> - ${établissement}, ${annéesÉtudes}</p>
+                        <h2>Compétences</h2>
+                        <ul>
+                            ${compétencesHtml}
+                        </ul>
+                    `;
+                    document.getElementById('cvContainer').innerHTML = cvHtml;
+                })
+                .catch(error => console.error('Erreur:', error));
+        });
+    </script>
+</body>
+</html>
