@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+//On demarre la session
 if (!isset($_SESSION['username'])) {
     echo "error";
     exit();
