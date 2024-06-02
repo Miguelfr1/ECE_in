@@ -1,6 +1,6 @@
 # ECE In - Social Media Professionnel de l’ECE Paris
 
-ECE In est une plateforme de réseau social professionnel dédiée aux étudiants et alumni de l’ECE Paris. Ce projet permet aux utilisateurs de se connecter, d'échanger des messages, de recevoir des notifications, de publier des événements et de gérer des offres d'emplois.
+ECE In est une plateforme de réseau social professionnel dédiée aux étudiants et alumni de l’ECE Paris. Ce projet permet aux utilisateurs de se connecter, d'échanger des messages, de recevoir des notifications, de publier des événements et de gérer des offres d'emplois..
 
 ## Table des matières
 
