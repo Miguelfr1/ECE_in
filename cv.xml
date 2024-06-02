@@ -8,7 +8,7 @@
     </InformationsPersonnelles>
     <Expérience>
         <Emploi>
-            <Titre>Développeur Web</Titre>
+            <Titre>Developpeur Web</Titre>
             <Entreprise>ECE Social media</Entreprise>
             <Années>2027-2050</Années>
             <Description>Développement de sites web et d'applications web.</Description>
@@ -26,5 +26,5 @@
         <Compétence>JavaScript</Compétence>
         <Compétence>Electromagnetisme</Compétence>
     </Compétences>
-    //rajouter categories
+    //rajouter categories ou pas
 </CV>
