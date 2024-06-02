@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_user'])) {
     $new_is_admin = isset($_POST['new_is_admin']) ? 1 : 0;
     $new_is_partner = isset($_POST['new_is_partner']) ? 1 : 0;
 
-    $add_user_sql = "INSERT INTO users (username, email, password, is_admin, partenaire_ece) VALUES ('$new_username', '$new_mail', '$new_password', '$new_is_admin', '$new_is_partner')";
+    $add_user_sql = "INSERT INTO users (username, email, password, is_admin, partenaire_ece, profile_picture) VALUES ('$new_username', '$new_mail', '$new_password', '$new_is_admin', '$new_is_partner', '')";
     if ($conn->query($add_user_sql) === TRUE) {
         echo "Nouvel utilisateur ajouté avec succès!";
     } else {

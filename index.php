@@ -32,9 +32,7 @@ $carousel_sql = "
     LIMIT 4
 ";
 $result_carousel = $conn->query($carousel_sql);
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -43,42 +41,25 @@ $result_carousel = $conn->query($carousel_sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ECE In - Accueil</title>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        let currentIndex = 0;
-
-        function moveSlide() {
-            const items = document.querySelectorAll('.carousel-item');
-            const totalItems = items.length;
-
-            currentIndex = (currentIndex + 1) % totalItems;
-
-            const carouselInner = document.querySelector('.carousel-inner');
-            carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
-
-            updateActiveClass(items);
-        }
-
-        function updateActiveClass(items) {
-            items.forEach((item, index) => {
-                if (index === currentIndex) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
+        function fetchNotifications() {
+            $.ajax({
+                url: 'fetch_notifications.php',
+                method: 'GET',
+                success: function(response) {
+                    const data = JSON.parse(response);
+                    const notificationCount = data.length;
+                    $('.notificationb p').text(notificationCount);
                 }
             });
         }
 
-        // Change slide every 15 seconds
-        setInterval(moveSlide, 5000);
-
-        // Initial active class setting
-        document.addEventListener('DOMContentLoaded', () => {
-            const items = document.querySelectorAll('.carousel-item');
-            updateActiveClass(items);
+        $(document).ready(function() {
+            fetchNotifications(); // Initial fetch
+            setInterval(fetchNotifications, 1000); // Fetch notifications every 1 second
         });
     </script>
-
 </head>
 <body>
     <div class="wrapper">
@@ -89,8 +70,11 @@ $result_carousel = $conn->query($carousel_sql);
 
         <div class="leftcolonne">
             <div class="navigation">
-                <a href="index.php">Accueil</a><br><br><br>
+                <a href="index.php" class="navcurrent">Accueil</a><br><br><br>
                 <a href="mon_reseau.php">Mon Réseau</a><br><br><br>
+                <div class="notificationb">
+                    <p>0</p>
+                </div>
                 <a href="notifications.php">Notifications</a><br><br><br>
                 <a href="messagerie.php">Messagerie</a><br><br><br>
                 <a href="fil_d_actualite.php">Fil d'actualité</a><br><br><br>
@@ -107,10 +91,9 @@ $result_carousel = $conn->query($carousel_sql);
         </div>
         <script>
             function toggleDropdown() {
-            document.getElementById("myDropdown").classList.toggle("show");
+                document.getElementById("myDropdown").classList.toggle("show");
             }
 
-            // Fermer le dropdown si on clique en dehors
             window.onclick = function(event) {
                 if (!event.target.matches('.menu-icon')) {
                     var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -147,11 +130,9 @@ $result_carousel = $conn->query($carousel_sql);
                                 else{
                                     $post_id = $mon_post['id'];
                                     echo "<div class='post'>";
-                                    echo "<p><strong><a href='user_profile.php?username=" . htmlspecialchars($mon_post['username']) . "'><img src='" . htmlspecialchars($user['profile_picture']) . "' alt='Profile Picture' style='width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;'>" . htmlspecialchars($mon_post['username']) . "</a></strong></p>";
+                                    echo "<div class='contenairpubli'><p>" . htmlspecialchars($mon_post['username']) . "</p><a href='user_profile.php?username=" . htmlspecialchars($mon_post['username']) . "'><img src='" . htmlspecialchars($user['profile_picture']) . "' alt='Profile Picture' style='width: 60px; height: 60px; border-radius: 50%; margin-left: 10px;'></a></div>";
                                     echo "<p><strong>" . htmlspecialchars($mon_post['feeling']) . "</strong></p>";
                                     echo "<p>" . htmlspecialchars($mon_post['content']) . "</p>";
-                                    echo "<p>Lieu: " . htmlspecialchars($mon_post['location']) . "</p>";
-
                                     if ($mon_post['media_path']) {
                                         if (strpos($mon_post['media_path'], '.mp4') !== false || strpos($mon_post['media_path'], '.avi') !== false || strpos($mon_post['media_path'], '.mov') !== false) {
                                             echo "<p><video width='320' height='240' controls><source src='" . htmlspecialchars($mon_post['media_path']) . "' type='video/mp4'>Your browser does not support the video tag.</video></p>";
@@ -159,13 +140,14 @@ $result_carousel = $conn->query($carousel_sql);
                                             echo "<p><img src='" . htmlspecialchars($mon_post['media_path']) . "' alt='media' width='100px' style='max-width:100%'></p>";
                                         }
                                     }
+                                    echo "<div class='post-info'><p>Lieu: " . htmlspecialchars($mon_post['location']) . "</p>";
+                                    echo "<p>Créé le: " . htmlspecialchars($mon_post['created_at']) . "</p>";
                                     if (!empty($mon_post['datetime']) && $mon_post['datetime'] !== '0000-00-00 00:00:00') {
                                         echo "<p>Le: " . htmlspecialchars($mon_post['datetime']) . "</p>";
                                     }
-                                    echo "<p>Créé le: " . htmlspecialchars($mon_post['created_at']) . "</p>";
-                                    
+                                    echo "</div>";
+                                    echo "<p>" . htmlspecialchars($mon_post['feeling']) . "</p>";
                                 }
-                                
                             ?>
                         </div>
                         <div class="r">
@@ -192,11 +174,9 @@ $result_carousel = $conn->query($carousel_sql);
                                 else{
                                     $post_id = $mon_post['id'];
                                     echo "<div class='post'>";
-                                    echo "<p><strong><a href='user_profile.php?username=" . htmlspecialchars($mon_post['username']) . "'><img src='" . htmlspecialchars($mon_post['profile_picture']) . "' alt='Profile Picture' style='width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;'>" . htmlspecialchars($mon_post['username']) . "</a></strong></p>";
-                                    echo "<p><strong>" . htmlspecialchars($mon_post['feeling']) . "</strong></p>";
+                                    echo "<div class='contenairpubli'><p>" . htmlspecialchars($mon_post['username']) . "</p><a href='user_profile.php?username=" . htmlspecialchars($mon_post['username']) . "'><img src='" . htmlspecialchars($mon_post['profile_picture']) . "' alt='Profile Picture' style='width: 60px; height: 60px; border-radius: 50%; margin-left: 10px;'></a></div>";
+                                    echo "<p class='titre-post'><strong>" . htmlspecialchars($mon_post['feeling']) . "</strong></p>";
                                     echo "<p>" . htmlspecialchars($mon_post['content']) . "</p>";
-                                    echo "<p>Lieu: " . htmlspecialchars($mon_post['location']) . "</p>";
-
                                     if ($mon_post['media_path']) {
                                         if (strpos($mon_post['media_path'], '.mp4') !== false || strpos($mon_post['media_path'], '.avi') !== false || strpos($mon_post['media_path'], '.mov') !== false) {
                                             echo "<p><video width='320' height='240' controls><source src='" . htmlspecialchars($mon_post['media_path']) . "' type='video/mp4'>Your browser does not support the video tag.</video></p>";
@@ -204,13 +184,14 @@ $result_carousel = $conn->query($carousel_sql);
                                             echo "<p><img src='" . htmlspecialchars($mon_post['media_path']) . "' alt='media' width='100px' style='max-width:100%'></p>";
                                         }
                                     }
+                                    echo "<div class='post-info'><p>Lieu: " . htmlspecialchars($mon_post['location']) . "</p>";
+                                    echo "<p>Créé le: " . htmlspecialchars($mon_post['created_at']) . "</p>";
                                     if (!empty($mon_post['datetime']) && $mon_post['datetime'] !== '0000-00-00 00:00:00') {
                                         echo "<p>Le: " . htmlspecialchars($mon_post['datetime']) . "</p>";
                                     }
-                                    echo "<p>Créé le: " . htmlspecialchars($mon_post['created_at']) . "</p>";
-                                    
+                                    echo "</div>";
+                                    echo "<p>" . htmlspecialchars($mon_post['feeling']) . "</p>";
                                 }
-                                
                             ?>
                         </div>
                     </div>  
@@ -228,6 +209,7 @@ $result_carousel = $conn->query($carousel_sql);
                                             $content = htmlspecialchars($row['content']);
                                             $datetime = htmlspecialchars($row['datetime']);
                                             $location = htmlspecialchars($row['location']);
+                                            $desc = htmlspecialchars($row['feeling']);
 
                                             $date = new DateTime($datetime);
                                             $formatted_date = $date->format('d m Y');
@@ -244,6 +226,7 @@ $result_carousel = $conn->query($carousel_sql);
                                             echo '<span class="username"> Publié par: <a href="user_profile.php?username=' . $username . '"><img src="' . $row['profile_picture'] . '" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">' . $username . '</a></span><br>';
                                             echo '<span class="datetime"> A lieu le: ' . $formatted_date . ' </span>';
                                             echo '<div class="location">A lieu a: ' . $location . '</div>';
+                                            echo '<div class="desc">' . $desc . '</div>';
                                             echo '</div>';
                                             echo '</div>';
                                             echo '</div>';
@@ -264,10 +247,8 @@ $result_carousel = $conn->query($carousel_sql);
                     <p>Email : contact@ecein.com</p>
                     <p>Téléphone : +33 6 95 95 75 11</p>
                     <p>Adresse : 10 Rue de Sextius Michel, 75015 Paris, France</p>
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3708775973523!2d2.286017777763897!3d48.85113777133131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e67151e3c16d05%3A0x1e3446766ada1337!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris!5e0!3m2!1sfr!2sfr!4v1717113604133!5m2!1sfr!2sfr" width="200" height="150" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.3708775973523!2d2.286017777763897!3d48.85113777133131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e67151e3c16d05%3A0x1e3446766ada1337!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris!5e0!3m2!1sfr!2sfr!4v1717113604133!5m2!1sfr!2sfr" width="600" height=450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
-            </div>
-                
             </div>
         </div>
         <div class="footer">

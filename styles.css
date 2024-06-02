@@ -1073,3 +1073,58 @@ h2 {
     font-weight: bold;
     font-size: 20px;
 }
+
+
+.read-all-button{
+    float: right;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+    background-color: #256C6C;
+    cursor: pointer;
+}
+
+.CV-container{
+    background-color: #81c2c2;
+    width: 500px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+.CV-container h4{
+    text-align: center;
+    border-top: 2px solid white;
+    padding-top: 5px;
+}
+.titre-CV{
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+}
+.info-perso{
+    float: right;
+    text-align: right;
+}
+.espaceentre{
+    margin-left: 10px;
+}
+#dernierp{
+    margin-bottom: 30px;
+}
+
+
+.offer-button{
+    margin-top: 5px;
+    color: white;
+    background-color: #256C6C;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.offer-button:hover{
+    background-color: #153e3e
+}

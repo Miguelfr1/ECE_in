@@ -6,34 +6,35 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['post_id'])) {
+include 'db.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sender_username = $_SESSION['username'];
+    $receiver_username = $_POST['receiver_username'];
     $post_id = $_POST['post_id'];
+    $offer_type = $_POST['offer_type'];
 
-    // Récupérer le nom d'utilisateur de la publication associée
-    include 'db.php';
+    // Insertion de l'offre d'emploi dans la base de données
+    $sql = "INSERT INTO job_offers (sender_username, receiver_username, post_id, offer_type, created_at) 
+            VALUES (?, ?, ?, ?, NOW())";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssis", $sender_username, $receiver_username, $post_id, $offer_type);
 
+    $notif_sql = "INSERT INTO notifications (receiver, sender, types, statut) VALUES (?, ?, 'offre_emplois', 'pending')";
+    $notif = $conn->prepare($notif_sql);
+    $notif->bind_param("ss", $receiver_username, $sender_username);
+    $notif->execute();
 
-    $sql_post = "SELECT username FROM posts WHERE id='$post_id'";
-    $result_post = $conn->query($sql_post);
-
-    if ($result_post->num_rows > 0) {
-        $row_post = $result_post->fetch_assoc();
-        $receiver_username = $row_post['username'];
-
-        // Insérer l'offre d'emploi dans la table job_offers
-        $sql_insert = "INSERT INTO job_offers (sender_username, receiver_username, post_id) 
-                       VALUES ('$sender_username', '$receiver_username', '$post_id')";
-
-        if ($conn->query($sql_insert) === TRUE) {
-            echo "Offre d'emploi envoyée avec succès à $receiver_username!";
-        } else {
-            echo "Erreur: " . $sql_insert . "<br>" . $conn->error;
-        }
+    if ($stmt->execute()) {
+        echo "Offre d'emploi envoyée avec succès.";
     } else {
-        echo "Publication non trouvée.";
+        echo "Erreur: " . $stmt->error;
     }
 
-    $conn->close();
+    $stmt->close();
 }
+
+$conn->close();
+header("Location: fil_d_actualite.php");
+exit();
 ?>

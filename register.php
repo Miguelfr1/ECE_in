@@ -79,19 +79,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Inscription - ECE In</title>
 </head>
 <body>
-    <div class="container">
-        <form class="form" action="register.php" method="POST" enctype="multipart/form-data">
-            <h2>Inscription</h2>
-            <input type="text" name="username" placeholder="Nom d'utilisateur" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Mot de passe" required>
-            <label for="profile_picture">Photo de profil:</label>
-            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" required>
-            <label for="overlay">Overlay:</label>
-            <input type="file" id="overlay" name="overlay" accept="image/*" required>
-            <button type="submit">S'inscrire</button>
-            <p>Déjà inscrit ? <a href="login.php">Connectez-vous ici</a></p>
-        </form>
+    <div class="container" id="registerForm">
+        <div class="bloc1Login">
+            <img src="logoPiscine.png" alt="logo" class="logoPiscineDebut">
+            <p>Bienvenue sur ECE In, le réseau social innovant créé par une équipe de quatre étudiants passionnés dans le cadre de leurs projet de web dynamique. ECE In est conçu pour être un espace où les membres de la communauté ECE peuvent se connecter, interagir et évoluer professionnellement.</p>
+
+            </p>Sur ECE In, vous avez la possibilité d'explorer et de postuler à des offres d'emploi adaptées à votre profil, de partager vos idées et expériences à travers des publications, et de construire un réseau solide en établissant des connexions avec d'autres membres. De plus, grâce à notre messagerie intégrée, vous pouvez facilement discuter et échanger avec vos amis et contacts professionnels en temps réel.
+
+            Rejoignez-nous sur ECE In et découvrez un environnement convivial et professionnel, propice à la croissance personnelle et à l'enrichissement de votre carrière.</p>
+        </div>
+        <div class="bloc2Login">
+            <form class="form" action="register.php" method="POST" enctype="multipart/form-data">
+                <h2>Inscription</h2>
+                <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Mot de passe" required>
+                <label for="profile_picture">Photo de profil:</label>
+                <input type="file" id="profile_picture" name="profile_picture" accept="image/*" required><br>
+                <label for="overlay">Overlay:</label><br>
+                <input type="file" id="overlay" name="overlay" accept="image/*" required>
+                <button type="submit">S'inscrire</button>
+                <p>Déjà inscrit ? <a href="login.php">Connectez-vous ici</a></p>
+            </form>
+        </div>
     </div>
 </body>
 </html>

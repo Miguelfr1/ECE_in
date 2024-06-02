@@ -133,78 +133,119 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h1>Éditer Profil</h1>
         </div>
 
-        <div class="navigation">
-            <a href="index.php">Accueil</a>
-            <a href="mon_reseau.php">Mon Réseau</a>
-            <a href="fil_d_actualite.php">Fil d'actualité</a>
-            <a href="profile.php">Vous</a>
-            <a href="notifications.php">Notifications</a>
-            <a href="messagerie.php">Messagerie</a>
-            <a href="emplois.php">Emplois</a>
-            <a href="logout.php">Déconnexion</a>
+        <div class="leftcolonne">
+            <div class="navigation">
+                <a href="index.php">Accueil</a><br><br><br>
+                <a href="mon_reseau.php">Mon Réseau</a><br><br><br>
+                <div class="notificationb"><?php
+
+                    $nbr_notif_sql = "SELECT COUNT(*) FROM notifications WHERE receiver = '".$username."' and statut = 'pending';";
+                    $reponse = $conn->query($nbr_notif_sql);
+                    $resultat = $reponse->fetch_assoc();
+                    $nbr_notif = $resultat['COUNT(*)'];
+                    echo "<p>".$nbr_notif."</p>";
+                
+                ?>
+                </div>
+                <a href="notifications.php">Notifications</a><br><br><br>
+                <a href="messagerie.php">Messagerie</a><br><br><br>
+                <a href="fil_d_actualite.php">Fil d'actualité</a><br><br><br>
+                <a href="emplois.php">Emplois</a>
+            </div>
         </div>
+        <div class="menu">
+            <img src="<?php echo htmlspecialchars($user['profile_picture']); ?>" alt="Menu Icon" class="menu-icon" onclick="toggleDropdown()">
+            <p class="nom-profil"><?php echo htmlspecialchars($_SESSION['username']); ?></p>
+            <div id="myDropdown" class="dropdown-content">
+                <a href="profile.php">Vous</a>
+                <a href="logout.php">Déconnexion</a>
+            </div>
+        </div>
+        <script>
+            function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+            }
 
-        <div class="section">
-            <h2>Éditer votre profil</h2>
-            <form action="edit_profile.php" method="POST" enctype="multipart/form-data">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+            // Fermer le dropdown si on clique en dehors
+            window.onclick = function(event) {
+                if (!event.target.matches('.menu-icon')) {
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+            }
+        </script>
+        <div class="rightcolonne">
+            <div class="section" id="editprofil1">
+                <h2>Éditer votre profil</h2>
+                <form action="edit_profile.php" method="POST" enctype="multipart/form-data">
+                    <div class="blocprincipaledit">
+                        <div class="blocedit2">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
 
-                <label for="description">Description</label>
-                <textarea id="description" name="description"><?php echo htmlspecialchars($user['description'] ?? ''); ?></textarea>
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description"><?php echo htmlspecialchars($user['description'] ?? ''); ?></textarea>
+                        </div>
+                        <div class="blocedit2">
+                            <label for="profile_picture">Photo de profil</label>
+                            <input type="file" id="profile_picture" name="profile_picture">
 
-                <label for="profile_picture">Photo de profil</label>
-                <input type="file" id="profile_picture" name="profile_picture">
+                            <label for="overlay">Overlay</label>
+                            <input type="file" id="overlay" name="overlay">
+                        
+                            <label for="xml_cv">Importer votre CV (XML)</label>
+                            <input type="file" id="xml_cv" name="xml_cv">
 
-                <label for="overlay">Overlay</label>
-                <input type="file" id="overlay" name="overlay">
+                        </div>
+                    </div>
+                    <h3>Changer de mot de passe</h3>
+                    <label for="current_password">Mot de passe actuel</label>
+                    <input type="password" id="current_password" name="current_password">
 
-                <label for="xml_cv">Importer votre CV (XML)</label>
-                <input type="file" id="xml_cv" name="xml_cv">
+                    <label for="new_password">Nouveau mot de passe</label>
+                    <input type="password" id="new_password" name="new_password">
 
-                <h3>Changer de mot de passe</h3>
-                <label for="current_password">Mot de passe actuel</label>
-                <input type="password" id="current_password" name="current_password">
+                    <label for="confirm_password">Confirmer le nouveau mot de passe</label>
+                    <input type="password" id="confirm_password" name="confirm_password">
 
-                <label for="new_password">Nouveau mot de passe</label>
-                <input type="password" id="new_password" name="new_password">
+                    <button type="submit">Enregistrer</button>
+                    <a href="profile.php"><button type="button">Annuler</button></a>
+                </form>
 
-                <label for="confirm_password">Confirmer le nouveau mot de passe</label>
-                <input type="password" id="confirm_password" name="confirm_password">
+                <?php if (isset($cv_data)): ?>
+                    <h2>Votre CV</h2>
+                    <p><strong>Nom:</strong> <?php echo htmlspecialchars($cv_data['name']); ?></p>
+                    <p><strong>Adresse:</strong> <?php echo htmlspecialchars($cv_data['address']); ?></p>
+                    <p><strong>Email:</strong> <?php echo htmlspecialchars($cv_data['email']); ?></p>
+                    <p><strong>Téléphone:</strong> <?php echo htmlspecialchars($cv_data['phone']); ?></p>
 
-                <button type="submit">Enregistrer</button>
-                <a href="profile.php"><button type="button">Annuler</button></a>
-            </form>
-
-            <?php if (isset($cv_data)): ?>
-                <h2>Votre CV</h2>
-                <p><strong>Nom:</strong> <?php echo htmlspecialchars($cv_data['name']); ?></p>
-                <p><strong>Adresse:</strong> <?php echo htmlspecialchars($cv_data['address']); ?></p>
-                <p><strong>Email:</strong> <?php echo htmlspecialchars($cv_data['email']); ?></p>
-                <p><strong>Téléphone:</strong> <?php echo htmlspecialchars($cv_data['phone']); ?></p>
-
-                <h3>Expérience</h3>
-                <?php foreach ($cv_data['experience'] as $experience): ?>
-                    <p><strong>Titre:</strong> <?php echo htmlspecialchars($experience['title']); ?></p>
-                    <p><strong>Entreprise:</strong> <?php echo htmlspecialchars($experience['company']); ?></p>
-                    <p><strong>Années:</strong> <?php echo htmlspecialchars($experience['years']); ?></p>
-                    <p><strong>Description:</strong> <?php echo htmlspecialchars($experience['description']); ?></p>
-                <?php endforeach; ?>
-
-                <h3>Éducation</h3>
-                <p><strong>Diplôme:</strong> <?php echo htmlspecialchars($cv_data['education']['diploma']); ?></p>
-                <p><strong>Établissement:</strong> <?php echo htmlspecialchars($cv_data['education']['institution']); ?></p>
-                <p><strong>Années:</strong> <?php echo htmlspecialchars($cv_data['education']['years']); ?></p>
-
-                <h3>Compétences</h3>
-                <ul>
-                    <?php foreach ($cv_data['skills'] as $skill): ?>
-                        <li><?php echo htmlspecialchars($skill); ?></li>
+                    <h3>Expérience</h3>
+                    <?php foreach ($cv_data['experience'] as $experience): ?>
+                        <p><strong>Titre:</strong> <?php echo htmlspecialchars($experience['title']); ?></p>
+                        <p><strong>Entreprise:</strong> <?php echo htmlspecialchars($experience['company']); ?></p>
+                        <p><strong>Années:</strong> <?php echo htmlspecialchars($experience['years']); ?></p>
+                        <p><strong>Description:</strong> <?php echo htmlspecialchars($experience['description']); ?></p>
                     <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
-        </div>
 
+                    <h3>Éducation</h3>
+                    <p><strong>Diplôme:</strong> <?php echo htmlspecialchars($cv_data['education']['diploma']); ?></p>
+                    <p><strong>Établissement:</strong> <?php echo htmlspecialchars($cv_data['education']['institution']); ?></p>
+                    <p><strong>Années:</strong> <?php echo htmlspecialchars($cv_data['education']['years']); ?></p>
+
+                    <h3>Compétences</h3>
+                    <ul>
+                        <?php foreach ($cv_data['skills'] as $skill): ?>
+                            <li><?php echo htmlspecialchars($skill); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </div>
+        </div>
         <div class="footer">
             <p>&copy; 2024 ECE In. Tous droits réservés.</p>
         </div>

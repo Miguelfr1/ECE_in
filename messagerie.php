@@ -62,7 +62,101 @@ $user = $user_result->fetch_assoc();
             display: none;
         }
     </style>
-    
+    <script>
+        function fetchNotifications() {
+            $.ajax({
+                url: 'fetch_notifications.php',
+                method: 'GET',
+                success: function(response) {
+                    const notifications = JSON.parse(response);
+                    const notificationCount = notifications.length;
+                    $('.notificationb p').text(notificationCount);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            setInterval(fetchNotifications, 1000);
+
+            $('#messageForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: 'send_message.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.error) {
+                            console.error(response.error);
+                        } else {
+                            $('#conversation').append(
+                                '<div class="message">' +
+                                    '<p>' +
+                                        '<strong>' +
+                                            '<a href="user_profile.php?username=' + response.sender + '">' +
+                                                '<img src="' + response.profile_picture + '" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">' +
+                                            '</a>' +
+                                            response.sender +
+                                        '</strong> (' + response.timestamp + '): ' +
+                                        response.message +
+                                    '</p>' +
+                                '</div>'
+                            );
+                            $('textarea[name="message"]').val('');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+            $('#groupMessageForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: 'send_group_message.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.status === 'error') {
+                            console.error(response.message);
+                        } else {
+                            $('#group-conversation').append(
+                                '<div class="message">' +
+                                    '<p>' +
+                                        '<strong>' +
+                                            '<a href="user_profile.php?username=' + response.sender + '">' +
+                                                '<img src="' + response.profile_picture + '" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">' +
+                                            '</a>' +
+                                            response.sender +
+                                        '</strong> (' + response.timestamp + '): ' +
+                                        response.message +
+                                    '</p>' +
+                                '</div>'
+                            );
+                            $('textarea[name="message"]').val('');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+
+            $('#closeConversation').on('click', function() {
+                window.location.href = 'messagerie.php';
+            });
+
+            $('#closeGroupConversation').on('click', function() {
+                window.location.href = 'messagerie.php';
+            });
+
+            $('#createGroupButton').on('click', function() {
+                $('#createGroupForm').toggle();
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="wrapper">
@@ -76,15 +170,14 @@ $user = $user_result->fetch_assoc();
                 <a href="index.php">Accueil</a><br><br><br>
                 <a href="mon_reseau.php">Mon Réseau</a><br><br><br>
                 <a href="notifications.php">Notifications</a>
-                <div class="notificationb"><?php
-
+                <div class="notificationb">
+                    <?php
                     $nbr_notif_sql = "SELECT COUNT(*) FROM notifications WHERE receiver = '".$username."' and statut = 'pending';";
                     $reponse = $conn->query($nbr_notif_sql);
                     $resultat = $reponse->fetch_assoc();
                     $nbr_notif = $resultat['COUNT(*)'];
                     echo "<p>".$nbr_notif."</p>";
-                
-                ?>
+                    ?>
                 </div><br><br><br>
                 <a href="messagerie.php" class="navcurrent">Messagerie</a><br><br><br>
                 <a href="fil_d_actualite.php">Fil d'actualité</a><br><br><br>
@@ -92,19 +185,18 @@ $user = $user_result->fetch_assoc();
             </div>
         </div>
         <div class="menu">
-                <img src="<?php echo htmlspecialchars($user['profile_picture']); ?>" alt="Menu Icon" class="menu-icon" onclick="toggleDropdown()">
-                <p class="nom-profil"><?php echo htmlspecialchars($_SESSION['username']); ?></p>
-                <div id="myDropdown" class="dropdown-content">
-                    <a href="profile.php">Vous</a>
-                    <a href="logout.php">Déconnexion</a>
-                </div>
+            <img src="<?php echo htmlspecialchars($user['profile_picture']); ?>" alt="Menu Icon" class="menu-icon" onclick="toggleDropdown()">
+            <p class="nom-profil"><?php echo htmlspecialchars($_SESSION['username']); ?></p>
+            <div id="myDropdown" class="dropdown-content">
+                <a href="profile.php">Vous</a>
+                <a href="logout.php">Déconnexion</a>
             </div>
+        </div>
         <script>
             function toggleDropdown() {
-            document.getElementById("myDropdown").classList.toggle("show");
+                document.getElementById("myDropdown").classList.toggle("show");
             }
 
-            // Fermer le dropdown si on clique en dehors
             window.onclick = function(event) {
                 if (!event.target.matches('.menu-icon')) {
                     var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -320,86 +412,21 @@ $user = $user_result->fetch_assoc();
                         }
                     }
 
+                    function fetchNotifications() {
+                        $.ajax({
+                            url: 'fetch_notifications.php',
+                            method: 'GET',
+                            success: function(response) {
+                                const notifications = JSON.parse(response);
+                                const notificationCount = notifications.length;
+                                $('.notificationb p').text(notificationCount);
+                            }
+                        });
+                    }
+
                     $(document).ready(function() {
                         setInterval(loadMessages, 1000);
-
-                        $('#messageForm').on('submit', function(event) {
-                            event.preventDefault();
-                            $.ajax({
-                                url: 'send_message.php',
-                                type: 'POST',
-                                dataType: 'json',
-                                data: $(this).serialize(),
-                                success: function(response) {
-                                    if (response.error) {
-                                        console.error(response.error);
-                                    } else {
-                                        $('#conversation').append(
-                                            '<div class="message">' +
-                                                '<p>' +
-                                                    '<strong>' +
-                                                        '<a href="user_profile.php?username=' + response.sender + '">' +
-                                                            '<img src="' + response.profile_picture + '" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">' +
-                                                        '</a>' +
-                                                        response.sender +
-                                                    '</strong> (' + response.timestamp + '): ' +
-                                                    response.message +
-                                                '</p>' +
-                                            '</div>'
-                                        );
-                                        $('textarea[name="message"]').val('');
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error(xhr.responseText);
-                                }
-                            });
-                        });
-
-                        $('#groupMessageForm').on('submit', function(event) {
-                            event.preventDefault();
-                            $.ajax({
-                                url: 'send_group_message.php',
-                                type: 'POST',
-                                dataType: 'json',
-                                data: $(this).serialize(),
-                                success: function(response) {
-                                    if (response.status === 'error') {
-                                        console.error(response.message);
-                                    } else {
-                                        $('#group-conversation').append(
-                                            '<div class="message">' +
-                                                '<p>' +
-                                                    '<strong>' +
-                                                        '<a href="user_profile.php?username=' + response.sender + '">' +
-                                                            '<img src="' + response.profile_picture + '" alt="Profile Picture" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;">' +
-                                                        '</a>' +
-                                                        response.sender +
-                                                    '</strong> (' + response.timestamp + '): ' +
-                                                    response.message +
-                                                '</p>' +
-                                            '</div>'
-                                        );
-                                        $('textarea[name="message"]').val('');
-                                    }
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error(xhr.responseText);
-                                }
-                            });
-                        });
-
-                        $('#closeConversation').on('click', function() {
-                            window.location.href = 'messagerie.php';
-                        });
-
-                        $('#closeGroupConversation').on('click', function() {
-                            window.location.href = 'messagerie.php';
-                        });
-
-                        $('#createGroupButton').on('click', function() {
-                            $('#createGroupForm').toggle();
-                        });
+                        setInterval(fetchNotifications, 1000);
                     });
                 </script>
             </div>  

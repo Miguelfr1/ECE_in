@@ -30,6 +30,11 @@ $friend_request = $friend_request_result->fetch_assoc();
 $friend_sql = "SELECT * FROM friends WHERE (user1='$current_user' AND user2='$username') OR (user1='$username' AND user2='$current_user')";
 $friend_result = $conn->query($friend_sql);
 $is_friend = $friend_result->num_rows > 0;
+
+$username_ = $_SESSION['username'];
+$user_sql_ = "SELECT * FROM users WHERE username='$username_'";
+$user_result_ = $conn->query($user_sql_);
+$user_ = $user_result_->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -118,121 +123,266 @@ $is_friend = $friend_result->num_rows > 0;
 <body>
     <div class="wrapper">
         <div class="header">
+            <img src="logoPiscine.png" alt="ECE Paris Logo">
             <h1>Profil de <?php echo htmlspecialchars($username); ?></h1>
-            <img src="https://via.placeholder.com/150" alt="ECE Paris Logo">
         </div>
 
-        <div class="navigation">
-            <a href="index.php">Accueil</a>
-            <a href="mon_reseau.php">Mon Réseau</a>
-            <a href="fil_d_actualite.php">Fil d'actualité</a>
-            <a href="profile.php">Vous</a>
-            <a href="notifications.php">Notifications</a>
-            <a href="messagerie.php">Messagerie</a>
-            <a href="emplois.php">Emplois</a>
-            <a href="logout.php">Déconnexion</a>
-        </div>
-
-        <div class="section">
-            <div class="profile-overview">
-                <img src="<?php echo htmlspecialchars($user['profile_picture']); ?>" alt="Photo de profil" style="width: 100px; height: 100px; border-radius: 50%;">
-                <h3><?php echo htmlspecialchars($user['username']); ?></h3>
-                <?php if ($user['overlay']): ?>
-                    <img src="<?php echo htmlspecialchars($user['overlay']); ?>" alt="Overlay" style="width: 100px; height: 100px;">
-                <?php endif; ?>
-                <?php if ($is_friend): ?>
-                    <button disabled>Vous êtes déjà amis</button>
-                <?php elseif ($friend_request && $friend_request['statut'] == 'pending'): ?>
-                    <?php if ($friend_request['sender'] == $current_user): ?>
-                        <button disabled>Demande envoyée</button>
-                    <?php else: ?>
-                        <form action="accept_friend.php" method="POST" class="accept-friend-form">
-                            <input type="hidden" name="request_id" value="<?php echo $friend_request['id']; ?>">
-                            <button type="submit">Accepter la demande d'ami</button>
-                        </form>
-                    <?php endif; ?>
-                <?php elseif ($current_user !== $username): ?>
-                    <form class="add-friend-form">
-                        <input type="hidden" name="receiver" value="<?php echo htmlspecialchars($username); ?>">
-                        <button type="submit">Ajouter comme ami</button>
-                    </form>
-                <?php endif; ?>
+        <div class="leftcolonne">
+            <div class="navigation">
+                <a href="index.php">Accueil</a><br><br><br>
+                <a href="mon_reseau.php">Mon Réseau</a><br><br><br>
+                <div class="notificationb"><?php
+                    $nbr_notif_sql = "SELECT COUNT(*) FROM notifications WHERE receiver = '$current_user' and statut = 'pending';";
+                    $reponse = $conn->query($nbr_notif_sql);
+                    $resultat = $reponse->fetch_assoc();
+                    $nbr_notif = $resultat['COUNT(*)'];
+                    echo "<p>".$nbr_notif."</p>";
+                ?>
+                </div>
+                <a href="notifications.php">Notifications</a><br><br><br>
+                <a href="messagerie.php">Messagerie</a><br><br><br>
+                <a href="fil_d_actualite.php">Fil d'actualité</a><br><br><br>
+                <a href="emplois.php">Emplois</a>
             </div>
-
-            <h3>Publications de <?php echo htmlspecialchars($username); ?></h3>
-            <?php
-            $sql = "
-                SELECT posts.*, users.profile_picture 
-                FROM posts 
-                INNER JOIN users ON posts.username = users.username 
-                WHERE posts.username = '$username'
-                AND (
-                    posts.visibility = 'public'
-                    OR (posts.visibility = 'all_friends' AND '$current_user' IN (SELECT CASE WHEN user1 = '$username' THEN user2 ELSE user1 END FROM friends WHERE user1 = '$username' OR user2 = '$username'))
-                    OR (posts.visibility = 'selected_friends' AND posts.id IN (SELECT post_id FROM post_visibility WHERE friend_username = '$current_user'))
-                    OR posts.visibility = 'private' AND posts.username = '$current_user'
-                )
-                ORDER BY posts.created_at DESC
-            ";
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<div class='post'>";
-                    echo "<p><strong><img src='" . htmlspecialchars($row['profile_picture']) . "' alt='Profile Picture' style='width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;'>" . htmlspecialchars($row['username']) . "</strong></p>";
-                    echo "<p><strong>" . htmlspecialchars($row['feeling']) . "</strong></p>";
-                    echo "<p>" . htmlspecialchars($row['content']) . "</p>";
-                    if ($row['media_path']) {
-                        if (strpos($row['media_path'], '.mp4') !== false || strpos($row['media_path'], '.avi') !== false || strpos($row['media_path'], '.mov') !== false) {
-                            echo "<p><video width='320' height='240' controls><source src='" . htmlspecialchars($row['media_path']) . "' type='video/mp4'>Your browser does not support the video tag.</video></p>";
-                        } else {
-                            echo "<p><img src='" . htmlspecialchars($row['media_path']) . "' alt='media' style='max-width:100%'></p>";
-                        }
-                    }
-                    echo "<p>Lieu: " . htmlspecialchars($row['location']) . "</p>";
-                    if (!empty($row['datetime']) && $row['datetime'] !== '0000-00-00 00:00:00') {
-                        echo "<p>Le: " . htmlspecialchars($row['datetime']) . "</p>";
-                    }
-                    echo "<p>Créé le: " . htmlspecialchars($row['created_at']) . "</p>";
-
-                    echo "<button class='like-button' data-post-id='" . $row['id'] . "'><i class='far fa-heart'></i></button>";
-                    echo "<p class='likes-count'>Likes: " . htmlspecialchars($row['likes']) . "</p>";
-
-                    // Display comments
-                    $post_id = $row['id'];
-                    $comment_sql = "SELECT comments.*, users.profile_picture FROM comments INNER JOIN users ON comments.username = users.username WHERE comments.post_id='$post_id' ORDER BY comments.created_at ASC";
-                    $comment_result = $conn->query($comment_sql);
-
-                    echo "<div class='comments'>";
-                    if ($comment_result->num_rows > 0) {
-                        while ($comment_row = $comment_result->fetch_assoc()) {
-                            echo "<p><strong><img src='" . htmlspecialchars($comment_row['profile_picture']) . "' alt='Profile Picture' style='width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;'>" . htmlspecialchars($comment_row['username']) . ":</strong> " . htmlspecialchars($comment_row['comment']) . "</p>";
-                        }
-                    }
-                    echo "<form action='comment.php' method='POST' class='comment-form'>";
-                    echo "<input type='hidden' name='post_id' value='" . $post_id . "'>";
-                    echo "<input type='text' name='comment' placeholder='Commenter' required>";
-                    echo "<button type='submit' class='comment-button'><i class='far fa-comment'></i></button>";
-                    echo "</form>";
-
-                    echo "<form action='send_job_offer.php' method='POST' class='job-offer-form'>";
-                    echo "<input type='hidden' name='post_id' value='" . $post_id . "'>";
-                    echo "<button type='submit'>Envoyer une offre d'emploi</button>";
-                    echo "</form>";
-                    echo "</div>";
-
-                    echo "</div>";
-                }
-            } else {
-                echo "<p>Aucune publication pour le moment.</p>";
+        </div>
+        <div class="menu">
+            <img src="<?php echo htmlspecialchars($user_['profile_picture']); ?>" alt="Menu Icon" class="menu-icon" onclick="toggleDropdown()">
+            <p class="nom-profil"><?php echo htmlspecialchars($_SESSION['username']); ?></p>
+            <div id="myDropdown" class="dropdown-content">
+                <a href="profile.php">Vous</a>
+                <a href="logout.php">Déconnexion</a>
+            </div>
+        </div>
+        <script>
+            function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
             }
 
-            $conn->close();
-            ?>
+            // Fermer le dropdown si on clique en dehors
+            window.onclick = function(event) {
+                if (!event.target.matches('.menu-icon')) {
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+            }
+        </script>
+
+        <div class="rightcolonne">
+            <div class="section">
+                <div class="profile-overview">
+                    <div class="profilcomp">
+                        <img src="<?php echo htmlspecialchars($user['profile_picture']); ?>" alt="Photo de profil" style="width: 100px; height: 100px; border-radius: 50%;">
+                        <h3 class="nom-profilvue"><?php echo htmlspecialchars($user['username']); ?></h3>
+                        <div class="boutoncheckami">
+                            <?php if ($is_friend): ?>
+                                <button disabled>Vous êtes déjà amis</button>
+                            <?php elseif ($friend_request && $friend_request['statut'] == 'pending'): ?>
+                                <?php if ($friend_request['sender'] == $current_user): ?>
+                                    <button disabled>Demande envoyée</button>
+                                <?php else: ?>
+                                    <form action="accept_friend.php" method="POST" class="accept-friend-form">
+                                        <input type="hidden" name="request_id" value="<?php echo $friend_request['id']; ?>">
+                                        <button type="submit">Accepter la demande d'ami</button>
+                                    </form>
+                                <?php endif; ?>
+                            <?php elseif ($current_user !== $username): ?>
+                                <form class="add-friend-form">
+                                    <input type="hidden" name="receiver" value="<?php echo htmlspecialchars($username); ?>">
+                                    <button type="submit">Ajouter comme ami</button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    .profilcomp{
+                        margin-bottom:50px;
+                        padding:20px;
+                        display:flex;
+                        align-items:center;
+                        width: 95%; /* Largeur du conteneur */
+                        height: 100px; /* Hauteur du conteneur */
+                        background-image: url('<?php echo htmlspecialchars($user['overlay']); ?>'); /* Chemin de l'image */
+                        background-size: cover; /* Redimensionner l'image pour remplir complètement le conteneur */
+                        background-position: center; /* Positionner l'image au centre */
+                        background-repeat: no-repeat; /* Ne pas répéter l'image */
+                        border-radius:5px;
+                    }
+                </style>
+                <h3>Publications de <?php echo htmlspecialchars($username); ?></h3>
+                <?php
+                $sql = "
+                    SELECT posts.*, users.profile_picture 
+                    FROM posts 
+                    INNER JOIN users ON posts.username = users.username 
+                    WHERE posts.username = '$username'
+                    AND (
+                        posts.visibility = 'public'
+                        OR (posts.visibility = 'all_friends' AND '$current_user' IN (SELECT CASE WHEN user1 = '$username' THEN user2 ELSE user1 END FROM friends WHERE user1 = '$username' OR user2 = '$username'))
+                        OR (posts.visibility = 'selected_friends' AND posts.id IN (SELECT post_id FROM post_visibility WHERE friend_username = '$current_user'))
+                        OR posts.visibility = 'private' AND posts.username = '$current_user'
+                    )
+                    ORDER BY posts.created_at DESC
+                ";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        // Display comments
+                        $post_id = $row['id'];
+                        $comment_sql = "SELECT comments.*, users.profile_picture FROM comments INNER JOIN users ON comments.username = users.username WHERE comments.post_id='$post_id' ORDER BY comments.created_at ASC";
+                        $comment_result = $conn->query($comment_sql);
+                        echo "<div class='post'>";
+                        echo "<div class='contenairpubli'><p>" . htmlspecialchars($row['username']) . "</p><img src='" . htmlspecialchars($row['profile_picture']) . "' alt='Profile Picture' style='width: 60px; height: 60px; border-radius: 50%; margin-left: 10px;'></div>";
+                        echo "<p class='titre-post'><strong>" . htmlspecialchars($row['feeling']) . "</strong></p>";
+                        echo "<p>" . htmlspecialchars($row['content']) . "</p>";
+                        if ($row['media_path']) {
+                            if (strpos($row['media_path'], '.mp4') !== false || strpos($row['media_path'], '.avi') !== false || strpos($row['media_path'], '.mov') !== false) {
+                                echo "<p><video width='320' height='240' controls><source src='" . htmlspecialchars($row['media_path']) . "' type='video/mp4'>Your browser does not support the video tag.</video></p>";
+                            } else {
+                                echo "<p><img src='" . htmlspecialchars($row['media_path']) . "' alt='media' style='max-width:100%'></p>";
+                            }
+                        }
+                        echo "<div class='post-info'><p>Lieu: " . htmlspecialchars($row['location']) . "</p>";
+                        if (!empty($row['datetime']) && $row['datetime'] !== '0000-00-00 00:00:00') {
+                            echo "<p>Le: " . htmlspecialchars($row['datetime']) . "</p>";
+                        }
+                        echo "<p>Créé le: " . htmlspecialchars($row['created_at']) . "</p></div>";
+                        echo "<form action='comment.php' method='POST' class='comment-form'>";
+                        echo "<input type='hidden' name='post_id' value='" . $post_id . "'>";
+                        echo "<input type='text' name='comment' placeholder='Commenter' required>";
+                        echo "<button type='submit' class='comment-button'><i class='far fa-comment'></i></button>";
+                        echo "<button class='like-button' data-post-id='" . $row['id'] . "'><i class='far fa-heart'></i></button>";
+                        echo "<p class='likes-count'>Likes: " . htmlspecialchars($row['likes']) . "</p>";
+                        echo "</form>";
+
+                        echo "<div class='comments'>";
+                        if ($comment_result->num_rows > 0) {
+                            while ($comment_row = $comment_result->fetch_assoc()) {
+                                echo "<p><strong><img src='" . htmlspecialchars($comment_row['profile_picture']) . "' alt='Profile Picture' style='width: 20px; height: 20px; border-radius: 50%; margin-right: 5px;'>" . htmlspecialchars($comment_row['username']) . ":</strong> " . htmlspecialchars($comment_row['comment']) . "</p>";
+                            }
+                        }
+                        
+                        echo "</div>";
+                        echo "<form action='send_job_offer.php' method='POST' class='job-offer-form'>";
+                        echo "<input type='hidden' name='post_id' value='" . $post_id . "'>";
+                        echo "<button type='button' class='offer-button' data-post-id='" . $post_id . "' data-receiver-username='" . htmlspecialchars($row['username']) . "'>Envoyer une offre</button>";
+                        echo "</form>";
+                        echo "</div>";
+                    }
+                } else {
+                    echo "<p>Aucune publication pour le moment.</p>";
+                }
+
+                $conn->close();
+                ?>
+            </div>
+
+            
         </div>
 
+        <style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    </style>
+
+
+        <script>
+        $(document).ready(function() {
+        var modal = document.getElementById("offerModal");
+        var span = document.getElementsByClassName("close")[0];
+
+        $('.offer-button').on('click', function() {
+            var postId = $(this).data('post-id');
+            var receiverUsername = $(this).data('receiver-username');
+            $('#post-id').val(postId);
+            $('#receiver-username').val(receiverUsername);
+            modal.style.display = "block";
+        });
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    });
+    </script>
         <div class="footer">
             <p>&copy; 2024 ECE In. Tous droits réservés.</p>
+        </div>
+
+        
+    </div>
+
+    <div id="offerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Envoyer une offre</h2>
+            <form id="offer-form" action="send_job_offer.php" method="POST">
+                <input type="hidden" name="post_id" id="post-id">
+                <input type="hidden" name="receiver_username" id="receiver-username">
+                <div class="offer-options">
+                    <label>
+                        <input type="radio" name="offer_type" value="stage" required>
+                        Stage
+                    </label>
+                    <label>
+                        <input type="radio" name="offer_type" value="apprentissage" required>
+                        Apprentissage
+                    </label>
+                    <label>
+                        <input type="radio" name="offer_type" value="temporaire" required>
+                        Emploi Temporaire
+                    </label>
+                    <label>
+                        <input type="radio" name="offer_type" value="permanent" required>
+                        Emploi Permanent
+                    </label>
+                </div>
+                <button type="submit">Envoyer</button>
+            </form>
         </div>
     </div>
 </body>
